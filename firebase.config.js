@@ -6,15 +6,15 @@
 import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
 
-// Your web app's Firebase configuration
+// Your web app's Firebase configuration from environment variables
 const firebaseConfig = {
-  apiKey: "AIzaSyA7K-zvlBIDDgeqK0qH0Flg84ZUArpbK-g",
-  authDomain: "chatwithpdf-99c1b.firebaseapp.com",
-  projectId: "chatwithpdf-99c1b",
-  storageBucket: "chatwithpdf-99c1b.appspot.com",
-  messagingSenderId: "871818561966",
-  appId: "1:871818561966:web:a3cc21a6d8ad3c8cbf603f",
-  measurementId: "G-BMW6LVKFCN",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
