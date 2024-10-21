@@ -8,8 +8,8 @@ import { Inbox } from "lucide-react";
 import { STORAGE } from "../../firebase.config"; // Adjust the import according to your setup
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-const FileUpload = () => {
-  const [pdfUrl, setPdfUrl] = useState(null); // State to store the PDF URL
+const FileUpload: React.FC = () => {
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null); // State to store the PDF URL
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: { "application/pdf": [".pdf"] },
@@ -24,9 +24,28 @@ const FileUpload = () => {
         console.log("File uploaded!");
 
         // Get the download URL
-        const downloadURL = await getDownloadURL(storageRef);
+        const downloadURL: string = await getDownloadURL(storageRef);
         setPdfUrl(downloadURL); // Update the state with the PDF URL
         console.log("File available at", downloadURL);
+
+        // Send the file data to the API
+        const response = await fetch("/api/create-chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            file_key: storageRef.fullPath, // Use the full path as file key
+            file_name: file.name,
+          }),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          console.log("Chat created with ID:", data.chat_id);
+        } else {
+          console.error("Error creating chat:", data.error);
+        }
       } catch (error) {
         console.error("Error uploading file:", error);
       }
