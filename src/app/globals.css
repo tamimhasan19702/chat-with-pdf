@@ -1,3 +1,5 @@
+/** @format */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,6 +11,28 @@ body {
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+/* Add this to your globals.css or a specific CSS file */
+.Toastify__toast--success {
+  background-color: #4caf50; /* Green */
+  animation: slide-in 0.5s ease-in-out;
+}
+
+.Toastify__toast--error {
+  background-color: #f44336; /* Red */
+  animation: slide-in 0.5s ease-in-out;
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 
