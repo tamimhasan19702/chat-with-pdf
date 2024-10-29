@@ -7,8 +7,59 @@ import { useDropzone } from "react-dropzone";
 import { Inbox } from "lucide-react";
 import { STORAGE } from "../../firebase.config"; // Adjust the import according to your setup
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
 const FileUpload: React.FC = () => {
+  const { mutate } = useMutation({
+    mutationFn: async () => {
+      const acceptedFiles = await new Promise<File[]>((resolve) => {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = "application/pdf";
+        input.multiple = false;
+        input.onchange = () => {
+          resolve(Array.from(input.files));
+        };
+        input.click();
+      });
+
+      if (acceptedFiles.length === 0) {
+        throw new Error("No file selected");
+      }
+
+      const file = acceptedFiles[0];
+      const storageRef = ref(STORAGE, `uploads/${file.name}`);
+
+      try {
+        // Upload the file
+        await uploadBytes(storageRef, file);
+        console.log("File uploaded!");
+
+        // Get the download URL
+        const downloadURL: string = await getDownloadURL(storageRef);
+        setPdfUrl(downloadURL);
+        console.log("File available at", downloadURL);
+
+        // Send the file data to the API
+        const response = await axios.post("/api/create-chat", {
+          file_key: storageRef.fullPath,
+          file_name: file.name,
+        });
+
+        if (response.status !== 200) {
+          throw new Error("Error creating chat");
+        }
+
+        console.log("Chat created with ID:", response.data.chat_id);
+        return response.data;
+      } catch (error) {
+        console.error("Error uploading file or creating chat:", error);
+        throw error;
+      }
+    },
+  });
+
   const [pdfUrl, setPdfUrl] = useState<string | null>(null); // State to store the PDF URL
 
   const { getRootProps, getInputProps } = useDropzone({
